@@ -7,6 +7,8 @@ namespace light {
 static const char *const TAG = "light.addressable";
 
 void AddressableLight::call_setup() {
+  ESP_LOGCONFIG(TAG, "Setting up addressable light...");
+  ESP_LOGE(TAG, "AddressableLight::call_setup");
   this->setup();
 
 #ifdef ESPHOME_LOG_HAS_VERY_VERBOSE
@@ -28,6 +30,7 @@ std::unique_ptr<LightTransformer> AddressableLight::create_default_transition() 
 }
 
 Color color_from_light_color_values(LightColorValues val) {
+  ESP_LOGE(TAG, "AddressableLight::color_from_light_color_values");
   auto r = to_uint8_scale(val.get_color_brightness() * val.get_red());
   auto g = to_uint8_scale(val.get_color_brightness() * val.get_green());
   auto b = to_uint8_scale(val.get_color_brightness() * val.get_blue());
@@ -36,6 +39,8 @@ Color color_from_light_color_values(LightColorValues val) {
 }
 
 void AddressableLight::update_state(LightState *state) {
+  ESP_LOGE(TAG, "AddressableLight::update_state");
+
   auto val = state->current_values;
   auto max_brightness = to_uint8_scale(val.get_brightness() * val.get_state());
   this->correction_.set_local_brightness(max_brightness);
@@ -49,6 +54,7 @@ void AddressableLight::update_state(LightState *state) {
 }
 
 void AddressableLightTransformer::start() {
+  ESP_LOGE(TAG, "AddressableLight::start");
   // don't try to transition over running effects.
   if (this->light_.is_effect_active())
     return;
@@ -62,6 +68,7 @@ void AddressableLightTransformer::start() {
 }
 
 optional<LightColorValues> AddressableLightTransformer::apply() {
+  ESP_LOGE(TAG, "AddressableLight::apply");
   float smoothed_progress = LightTransitionTransformer::smoothed_progress(this->get_progress_());
 
   // When running an output-buffer modifying effect, don't try to transition individual LEDs, but instead just fade the
