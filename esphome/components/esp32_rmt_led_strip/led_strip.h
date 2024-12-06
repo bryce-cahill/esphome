@@ -31,12 +31,17 @@ class ESP32RMTLEDStripLightOutput : public light::AddressableLight {
   float get_setup_priority() const override;
 
   int32_t size() const override { return this->num_leds_; }
+
+  void set_cold_white_temperature(float cold_white_temperature) { cold_white_temperature_ = cold_white_temperature; }
+  void set_warm_white_temperature(float warm_white_temperature) { warm_white_temperature_ = warm_white_temperature; }
   light::LightTraits get_traits() override {
     auto traits = light::LightTraits();
     if (this->is_rgbw_ || this->is_wrgb_) {
       traits.set_supported_color_modes({light::ColorMode::RGB_WHITE, light::ColorMode::WHITE});
     } else {
-      traits.set_supported_color_modes({light::ColorMode::RGB});
+      traits.set_supported_color_modes({light::ColorMode::COLD_WARM_WHITE});
+      traits.set_min_mireds(this->cold_white_temperature_);
+      traits.set_max_mireds(this->warm_white_temperature_);
     }
     return traits;
   }
@@ -84,6 +89,9 @@ class ESP32RMTLEDStripLightOutput : public light::AddressableLight {
 
   uint32_t last_refresh_{0};
   optional<uint32_t> max_refresh_rate_{};
+
+  float cold_white_temperature_{0};
+  float warm_white_temperature_{0};
 };
 
 }  // namespace esp32_rmt_led_strip

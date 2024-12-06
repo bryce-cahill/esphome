@@ -6,6 +6,7 @@ from esphome.components import esp32_rmt, light
 import esphome.config_validation as cv
 from esphome.const import (
     CONF_CHIPSET,
+    CONF_COLD_WHITE_COLOR_TEMPERATURE,
     CONF_IS_RGBW,
     CONF_MAX_REFRESH_RATE,
     CONF_NUM_LEDS,
@@ -13,6 +14,7 @@ from esphome.const import (
     CONF_PIN,
     CONF_RGB_ORDER,
     CONF_RMT_CHANNEL,
+    CONF_WARM_WHITE_COLOR_TEMPERATURE,
 )
 
 CODEOWNERS = ["@jesserockz"]
@@ -102,6 +104,8 @@ CONFIG_SCHEMA = cv.All(
                 CONF_RESET_LOW,
                 default="0 us",
             ): cv.positive_time_period_nanoseconds,
+            cv.Optional(CONF_COLD_WHITE_COLOR_TEMPERATURE): cv.color_temperature,
+            cv.Optional(CONF_WARM_WHITE_COLOR_TEMPERATURE): cv.color_temperature,
         }
     ).extend(cv.COMPONENT_SCHEMA),
     cv.has_exactly_one_key(CONF_CHIPSET, CONF_BIT0_HIGH),
@@ -147,6 +151,9 @@ async def to_code(config):
     cg.add(var.set_is_rgbw(config[CONF_IS_RGBW]))
     cg.add(var.set_is_wrgb(config[CONF_IS_WRGB]))
     cg.add(var.set_use_psram(config[CONF_USE_PSRAM]))
+
+    cg.add(var.set_cold_white_temperature(config[CONF_COLD_WHITE_COLOR_TEMPERATURE]))
+    cg.add(var.set_warm_white_temperature(config[CONF_WARM_WHITE_COLOR_TEMPERATURE]))
 
     cg.add(
         var.set_rmt_channel(
